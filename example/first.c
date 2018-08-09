@@ -13,7 +13,7 @@ double mymin(double x, double y) {
 
 cabular {
   suite(mystrlen) {
-    where(const char *input, size_t expected) {
+    where(const char *input; size_t expected;) {
       {"hello", 6},
       {"", 0}
     };
@@ -24,7 +24,7 @@ cabular {
   }
 
   suite(mymin) {
-    where(double x, double y, double expected) {
+    where(double x; double y; double expected;) {
       {.x = 1.1, .y = 1.0, .expected = 1.1},
       {.x = 0.9, .y = 1.0, .expected = 1.0},
     };
