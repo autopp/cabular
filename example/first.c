@@ -14,7 +14,7 @@ double mymin(double x, double y) {
 cabular {
   suite(mystrlen) {
     where(const char *input; size_t expected;) {
-      {"hello", 6},
+      {"hello", 5},
       {"", 0}
     };
 
