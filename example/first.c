@@ -19,7 +19,7 @@ cabular {
     };
 
     with_them(c) {
-      expect_that(mystrlen(c.input), c.expected);
+      expect_that(mystrlen(c->input) == c->expected);
     }
   }
 
@@ -30,7 +30,7 @@ cabular {
     };
 
     with_them(c) {
-      expect_that(mymin(c.x, c.y), c.expected);
+      expect_that(mymin(c->x, c->y) == c->expected);
     }
   }
 }
