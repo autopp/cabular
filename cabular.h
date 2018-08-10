@@ -6,12 +6,14 @@
 #define cabular_make_str(token) #token
 
 #define cabular\
-  void cabular_main(void);\
+  void cabular_main(int *failed_count);\
   int main(void) {\
-    cabular_main();\
-    return 0;\
+    int failed_count = 0;\
+    cabular_main(&failed_count);\
+    printf("%d failure(s)\n", failed_count);\
+    return !!failed_count;\
   }\
-  void cabular_main(void)
+  void cabular_main(int *cabular_failed_count)
 
 #define suite(name)\
   printf("%s\n\t", cabular_make_str(name));\
@@ -25,6 +27,6 @@
   for (struct cabular_case_t *t = cabular_cases; cabular_case_counter < sizeof(cabular_cases) / sizeof(cabular_cases[0]); cabular_case_counter++, t++)
 
 #define expect_that(expr)\
-  printf("%s", expr ? "." : "F");
+  printf("%s", expr ? "." : ((*cabular_failed_count += 1), "F"));
 
 #endif
