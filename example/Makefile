@@ -1,10 +1,13 @@
 .PONOY: test clean
 
-test: first.out
+SRC=$(wildcard *.c)
+OUT=$(SRC:.c=.out)
+
+test: $(OUT)
 	./run_test.sh $^
 
-first.out: first.c ../cabular.h
+%.out: %.c ../cabular.h
 	gcc --std=gnu99 -Wall -Werror -I../ -o $@ $<
 
 clean:
-	rm -fR first.out
+	rm -fR $(OUT)
