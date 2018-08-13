@@ -16,7 +16,7 @@
   void cabular_main(int *cabular_failed_count)
 
 #define suite(name)\
-  printf("%s\n\t", cabular_make_str(name));\
+  printf("%s\n  ", cabular_make_str(name));\
   for (size_t cabular_case_counter, cabular_suite_executed = 0; !cabular_suite_executed || (printf("\n"), 0); cabular_suite_executed = 1)
 
 #define where(...)\
