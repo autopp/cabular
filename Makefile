@@ -1,5 +1,8 @@
 .PONOY: test clean
 
+example:
+	$(MAKE) -C example example
+
 test:
 	$(MAKE) -C example
 
