@@ -18,7 +18,7 @@ cabular {
       {"", 0}
     };
 
-    with_them(c) {
+    with_them {
       expect_that(mystrlen(c->input) == c->expected);
     }
   }
@@ -29,7 +29,7 @@ cabular {
       {.x = 0.9, .y = 1.0, .expected = 1.0},
     };
 
-    with_them(c) {
+    with_them {
       expect_that(mymax(c->x, c->y) == c->expected);
     }
   }

@@ -22,11 +22,15 @@
 #define where(...)\
   struct cabular_case_t { __VA_ARGS__ int cabular_end_of_cases; } cabular_cases[] = \
 
-#define with_them(t)\
+#define with_them\
   cabular_case_counter = 0;\
-  for (struct cabular_case_t *t = cabular_cases; cabular_case_counter < sizeof(cabular_cases) / sizeof(cabular_cases[0]); cabular_case_counter++, t++)
+  for (struct cabular_case_t *CABULAR_CASE_VAR = cabular_cases; cabular_case_counter < sizeof(cabular_cases) / sizeof(cabular_cases[0]); cabular_case_counter++, CABULAR_CASE_VAR++)
 
 #define expect_that(expr)\
   printf("%s", expr ? "." : ((*cabular_failed_count += 1), "F"));
+
+#ifndef CABULAR_CASE_VAR
+# define CABULAR_CASE_VAR c
+#endif
 
 #endif
