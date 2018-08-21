@@ -16,7 +16,7 @@
   void cabular_main(int *cabular_failed_count)
 
 #define suite(name)\
-  printf("%s\n  ", cabular_make_str(name));\
+  printf("%s\n", cabular_make_str(name));\
   for (size_t cabular_case_counter, cabular_suite_executed = 0; !cabular_suite_executed || (printf("\n"), 0); cabular_suite_executed = 1)
 
 #define where(...)\
@@ -25,6 +25,9 @@
 #define with_them\
   cabular_case_counter = 0;\
   for (struct cabular_case_t *CABULAR_CASE_VAR = cabular_cases; cabular_case_counter < sizeof(cabular_cases) / sizeof(cabular_cases[0]); cabular_case_counter++, CABULAR_CASE_VAR++)
+
+#define test(name)\
+  printf("  %s: ", cabular_make_str(name));
 
 #define expect_that(expr)\
   printf("%s", expr ? "." : ((*cabular_failed_count += 1), "F"));

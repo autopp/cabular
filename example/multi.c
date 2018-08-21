@@ -23,5 +23,10 @@ cabular {
       store(&c->var, c->new);
       expect_that(c->var == c->new);
     }
+
+    test(return_value) {
+      int x = 42;
+      expect_that(store(&x, 1) == 42);
+    }
   }
 }
