@@ -29,10 +29,15 @@ cabular {
       expect_that(store(&x, 1) == 42);
     }
 
-    test_with(stored_value, c) {
-      c->var = c->old;
-      store(&c->var, c->new);
-      expect_that(c->var == c->new);
+    patterns(store_inout, int old; int new;) {
+      {0, 1},
+      {1, 2}
+    };
+
+    test_with(stored_value, store_inout, c) {
+      int var = c->old;
+      store(&var, c->new);
+      expect_that(var == c->new);
     }
   }
 }
