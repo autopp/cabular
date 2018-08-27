@@ -10,16 +10,21 @@
 
 #define cabular_patterns_var(name) cabular_patterns_##name
 
+/* test context */
+struct cabular_ctx_t {
+  int failed_count;
+};
+
 /* public APIs */
 #define cabular\
-  void cabular_main(int *failed_count);\
+  void cabular_main(struct cabular_ctx_t *cabular_ctx);\
   int main(void) {\
-    int failed_count = 0;\
-    cabular_main(&failed_count);\
-    printf("%d failure(s)\n", failed_count);\
-    return !!failed_count;\
+    struct cabular_ctx_t cabular_ctx = { .failed_count = 0 };\
+    cabular_main(&cabular_ctx);\
+    printf("%d failure(s)\n", cabular_ctx.failed_count);\
+    return !!cabular_ctx.failed_count;\
   }\
-  void cabular_main(int *cabular_failed_count)
+  void cabular_main(struct cabular_ctx_t *cabular_ctx)
 
 #define suite(name)\
   printf("%s\n", cabular_make_str(name));\
@@ -38,6 +43,6 @@
   for (struct cabular_pattern_type(patterns) *pattern = cabular_patterns_var(patterns); cabular_case_counter < sizeof(cabular_patterns_var(patterns)) / sizeof(cabular_patterns_var(patterns)[0]) || (printf("\n"), 0); cabular_case_counter++, pattern++)
 
 #define expect_that(expr)\
-  printf("%s", expr ? "." : ((*cabular_failed_count += 1), "F"));
+  printf("%s", expr ? "." : ((cabular_ctx->failed_count += 1), "F"));
 
 #endif
