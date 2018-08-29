@@ -33,7 +33,8 @@ struct cabular_ctx_t {
 
 #define test(name)\
   printf("  %s: ", cabular_make_str(name));\
-  for (size_t cabular_test_executed = 0; !cabular_test_executed || (printf("\n"), 0); cabular_test_executed = 1)
+  cabular_ctx->is_failed = 0;\
+  for (size_t cabular_test_executed = 0; !cabular_test_executed || (printf("\n"), 0); printf("%s", cabular_ctx->is_failed ? ((cabular_ctx->failed_count += 1), "F") : "."), cabular_test_executed = 1)
 
 #define patterns(name, ...)\
   struct cabular_pattern_type(name) { __VA_ARGS__ } cabular_patterns_var(name)[] =
@@ -44,7 +45,6 @@ struct cabular_ctx_t {
   for (struct cabular_pattern_type(patterns) *pattern = cabular_patterns_var(patterns); ((cabular_ctx->is_failed = 0), cabular_case_counter) < sizeof(cabular_patterns_var(patterns)) / sizeof(cabular_patterns_var(patterns)[0]) || (printf("\n"), 0); printf("%s", cabular_ctx->is_failed ? ((cabular_ctx->failed_count += 1), "F") : "."), cabular_case_counter++, pattern++)
 
 #define failure() (cabular_ctx->is_failed = 1)
-
 
 #define expect_that(expr) ((expr) || failure())
 
