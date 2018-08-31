@@ -31,16 +31,14 @@ struct cabular_ctx_t {
     }\
     return !!cabular_ctx.failed_count;\
   }\
+  patterns(cabular_single, int dummy;) { 0 };\
   void cabular_main(struct cabular_ctx_t *cabular_ctx)
 
 #define suite(name)\
   printf("%s\n", cabular_make_str(name));\
   for (size_t cabular_case_counter, cabular_suite_executed = 0; !cabular_suite_executed || (printf("\n"), 0); cabular_suite_executed = 1)
 
-#define test(name)\
-  printf("  %s: ", cabular_make_str(name));\
-  cabular_ctx->is_failed = 0;\
-  for (size_t cabular_test_executed = 0; !cabular_test_executed || (printf("\n"), 0); printf("%s", cabular_ctx->is_failed ? ((cabular_ctx->failed_count += 1), "F") : "."), cabular_test_executed = 1)
+#define test(name) test_with(name, cabular_single, cabular_dummy)
 
 #define patterns(name, ...)\
   struct cabular_pattern_type(name) { __VA_ARGS__ } cabular_patterns_var(name)[] =
