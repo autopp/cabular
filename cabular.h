@@ -54,15 +54,15 @@ struct cabular_ctx_t {
   cabular_case_counter = 0;\
   for (struct cabular_pattern_type(patterns) *pattern = cabular_patterns_var(patterns); ((cabular_ctx->is_failed = 0), cabular_case_counter) < sizeof(cabular_patterns_var(patterns)) / sizeof(cabular_patterns_var(patterns)[0]) || (printf("\n"), 0); printf("%s", cabular_ctx->is_failed ? ((cabular_ctx->failed_count += 1), "F") : "."), cabular_case_counter++, pattern++)
 
-void failure_impl(struct cabular_ctx_t *ctx, const char *filename, int line, const char *msg) {
+void fail_impl(struct cabular_ctx_t *ctx, const char *filename, int line, const char *msg) {
   ctx->failures[ctx->failed_count].filename = filename;
   ctx->failures[ctx->failed_count].line = line;
   ctx->failures[ctx->failed_count].msg = msg;
   ctx->is_failed = 1;
 }
-#define failure(msg) (failure_impl(cabular_ctx, __FILE__, __LINE__, msg))
+#define fail(msg) (fail_impl(cabular_ctx, __FILE__, __LINE__, msg))
 
-#define expect_that(expr) if (!(expr)) failure("assertion is failed: " cabular_make_str(expr))
+#define expect_that(expr) if (!(expr)) fail("assertion is failed: " cabular_make_str(expr))
 
 
 #endif
