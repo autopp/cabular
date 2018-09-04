@@ -60,7 +60,11 @@ void fail_impl(struct cabular_ctx_t *ctx, const char *filename, int line, const 
   ctx->failures[ctx->failed_count].msg = msg;
   ctx->is_failed = 1;
 }
-#define fail(msg) (fail_impl(cabular_ctx, __FILE__, __LINE__, msg))
+#define fail(msg)\
+  {\
+    fail_impl(cabular_ctx, __FILE__, __LINE__, msg);\
+    continue;\
+  }
 
 #define expect_that(expr) if (!(expr)) fail("assertion is failed: " cabular_make_str(expr))
 
