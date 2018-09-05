@@ -47,7 +47,9 @@ struct cabular_ctx_t {
 #define test(name) test_with(name, cabular_single, cabular_dummy)
 
 #define patterns(name, ...)\
-  struct cabular_pattern_type(name) { __VA_ARGS__ } cabular_patterns_var(name)[] =
+  struct cabular_pattern_type(name) { const char *pattern_str; __VA_ARGS__ } cabular_patterns_var(name)[] =
+
+#define pattern(...) { cabular_make_str((__VA_ARGS__)), __VA_ARGS__ }
 
 #define test_with(name, patterns, pattern)\
   printf("  %s: ", cabular_make_str(name));\
@@ -67,6 +69,5 @@ void fail_impl(struct cabular_ctx_t *ctx, const char *filename, int line, const 
   }
 
 #define expect_that(expr) if (!(expr)) fail("assertion is failed: " cabular_make_str(expr))
-
 
 #endif

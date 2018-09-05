@@ -14,8 +14,8 @@ cabular {
     }
 
     patterns(store_inout, int old; int new;) {
-      {0, 1},
-      {1, 2}
+      pattern(0, 1),
+      pattern(1, 2)
     };
 
     test_with(stored_value, store_inout, c) {
