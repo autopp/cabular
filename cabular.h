@@ -41,14 +41,14 @@ void cabular_cleanup(struct cabular_ctx_t *ctx) {
 #define cabular\
   void cabular_main(struct cabular_ctx_t *cabular_ctx);\
   int main(void) {\
-    struct cabular_ctx_t cabular_ctx = { .failed_count = 0, .first_failure = NULL, .last_failure = NULL };\
-    cabular_main(&cabular_ctx);\
-    printf("%d failure(s)\n", cabular_ctx.failed_count);\
-    for (struct cabular_failure_t *f = cabular_ctx.first_failure; f != NULL; f = f->next) {\
+    struct cabular_ctx_t ctx = { .failed_count = 0, .first_failure = NULL, .last_failure = NULL };\
+    cabular_main(&ctx);\
+    printf("%d failure(s)\n", ctx.failed_count);\
+    for (struct cabular_failure_t *f = ctx.first_failure; f != NULL; f = f->next) {\
       printf("  %s:%d\n    pattern: %s\n    %s\n", f->filename, f->line, f->pattern_str, f->msg);\
     }\
-    cabular_cleanup(&cabular_ctx);\
-    return !!cabular_ctx.failed_count;\
+    cabular_cleanup(&ctx);\
+    return !!ctx.failed_count;\
   }\
   patterns(cabular_single, int dummy;) { 0 };\
   void cabular_main(struct cabular_ctx_t *cabular_ctx)
