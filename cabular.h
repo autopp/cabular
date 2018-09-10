@@ -27,6 +27,16 @@ struct cabular_ctx_t {
   struct cabular_failure_t *first_failure, *last_failure;
 };
 
+void cabular_cleanup(struct cabular_ctx_t *ctx) {
+  struct cabular_failure_t *f = ctx->first_failure;
+
+  while (f) {
+    struct cabular_failure_t *t = f;
+    f = f->next;
+    free(t);
+  }
+}
+
 /* public APIs */
 #define cabular\
   void cabular_main(struct cabular_ctx_t *cabular_ctx);\
@@ -37,6 +47,7 @@ struct cabular_ctx_t {
     for (struct cabular_failure_t *f = cabular_ctx.first_failure; f != NULL; f = f->next) {\
       printf("  %s:%d\n    pattern: %s\n    %s\n", f->filename, f->line, f->pattern_str, f->msg);\
     }\
+    cabular_cleanup(&cabular_ctx);\
     return !!cabular_ctx.failed_count;\
   }\
   patterns(cabular_single, int dummy;) { 0 };\
