@@ -4,6 +4,42 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/* public APIs */
+#define cabular\
+  void cabular_main(struct cabular_ctx_t *cabular_ctx);\
+  int main(void) {\
+    struct cabular_ctx_t ctx = { .failed_count = 0, .first_failure = NULL, .last_failure = NULL };\
+    cabular_main(&ctx);\
+    printf("%d failure(s)\n", ctx.failed_count);\
+    for (struct cabular_failure_t *f = ctx.first_failure; f != NULL; f = f->next) {\
+      printf("  %s:%d\n    pattern: %s\n    %s\n", f->filename, f->line, f->pattern_str, f->msg);\
+    }\
+    cabular_cleanup(&ctx);\
+    return !!ctx.failed_count;\
+  }\
+  patterns(cabular_single, int dummy;) { 0 };\
+  void cabular_main(struct cabular_ctx_t *cabular_ctx)
+
+#define suite(name)\
+  printf("%s\n", cabular_make_str(name));\
+  for (size_t cabular_case_counter, cabular_suite_executed = 0; !cabular_suite_executed || (printf("\n"), 0); cabular_suite_executed = 1)
+
+#define test(name) test_with(name, cabular_single, cabular_dummy)
+
+#define patterns(name, ...)\
+  struct cabular_pattern_type(name) { const char *cabular_pattern_str; __VA_ARGS__ } cabular_patterns_var(name)[] =
+
+#define pattern(...) { cabular_make_str((__VA_ARGS__)), __VA_ARGS__ }
+
+#define test_with(name, patterns, pattern)\
+  printf("  %s: ", cabular_make_str(name));\
+  cabular_case_counter = 0;\
+  for (struct cabular_pattern_type(patterns) *pattern = cabular_patterns_var(patterns); ((cabular_ctx->is_failed = 0), (cabular_ctx->current_pattern_str = pattern->cabular_pattern_str), cabular_case_counter) < sizeof(cabular_patterns_var(patterns)) / sizeof(cabular_patterns_var(patterns)[0]) || (printf("\n"), 0); printf("%s", cabular_ctx->is_failed ? ((cabular_ctx->failed_count += 1), "F") : "."), cabular_case_counter++, pattern++)
+
+#define expect_that(expr) if (!(expr)) fail("assertion is failed: " cabular_make_str(expr))
+
+/* private APIs */
+
 /* macro utilities */
 #define cabular_make_str(token) #token
 
@@ -37,38 +73,6 @@ void cabular_cleanup(struct cabular_ctx_t *ctx) {
   }
 }
 
-/* public APIs */
-#define cabular\
-  void cabular_main(struct cabular_ctx_t *cabular_ctx);\
-  int main(void) {\
-    struct cabular_ctx_t ctx = { .failed_count = 0, .first_failure = NULL, .last_failure = NULL };\
-    cabular_main(&ctx);\
-    printf("%d failure(s)\n", ctx.failed_count);\
-    for (struct cabular_failure_t *f = ctx.first_failure; f != NULL; f = f->next) {\
-      printf("  %s:%d\n    pattern: %s\n    %s\n", f->filename, f->line, f->pattern_str, f->msg);\
-    }\
-    cabular_cleanup(&ctx);\
-    return !!ctx.failed_count;\
-  }\
-  patterns(cabular_single, int dummy;) { 0 };\
-  void cabular_main(struct cabular_ctx_t *cabular_ctx)
-
-#define suite(name)\
-  printf("%s\n", cabular_make_str(name));\
-  for (size_t cabular_case_counter, cabular_suite_executed = 0; !cabular_suite_executed || (printf("\n"), 0); cabular_suite_executed = 1)
-
-#define test(name) test_with(name, cabular_single, cabular_dummy)
-
-#define patterns(name, ...)\
-  struct cabular_pattern_type(name) { const char *cabular_pattern_str; __VA_ARGS__ } cabular_patterns_var(name)[] =
-
-#define pattern(...) { cabular_make_str((__VA_ARGS__)), __VA_ARGS__ }
-
-#define test_with(name, patterns, pattern)\
-  printf("  %s: ", cabular_make_str(name));\
-  cabular_case_counter = 0;\
-  for (struct cabular_pattern_type(patterns) *pattern = cabular_patterns_var(patterns); ((cabular_ctx->is_failed = 0), (cabular_ctx->current_pattern_str = pattern->cabular_pattern_str), cabular_case_counter) < sizeof(cabular_patterns_var(patterns)) / sizeof(cabular_patterns_var(patterns)[0]) || (printf("\n"), 0); printf("%s", cabular_ctx->is_failed ? ((cabular_ctx->failed_count += 1), "F") : "."), cabular_case_counter++, pattern++)
-
 void fail_impl(struct cabular_ctx_t *ctx, const char *filename, int line, const char *msg) {
   struct cabular_failure_t *failure = malloc(sizeof(struct cabular_failure_t));
 
@@ -96,7 +100,5 @@ void fail_impl(struct cabular_ctx_t *ctx, const char *filename, int line, const 
     fail_impl(cabular_ctx, __FILE__, __LINE__, msg);\
     continue;\
   }
-
-#define expect_that(expr) if (!(expr)) fail("assertion is failed: " cabular_make_str(expr))
 
 #endif
