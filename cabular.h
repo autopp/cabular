@@ -73,7 +73,7 @@ void cabular_cleanup(struct cabular_ctx_t *ctx) {
   }
 }
 
-void fail_impl(struct cabular_ctx_t *ctx, const char *filename, int line, const char *msg) {
+void cabular_fail(struct cabular_ctx_t *ctx, const char *filename, int line, const char *msg) {
   struct cabular_failure_t *failure = malloc(sizeof(struct cabular_failure_t));
 
   if (failure == NULL) {
@@ -97,7 +97,7 @@ void fail_impl(struct cabular_ctx_t *ctx, const char *filename, int line, const 
 }
 #define fail(msg)\
   {\
-    fail_impl(cabular_ctx, __FILE__, __LINE__, msg);\
+    cabular_fail(cabular_ctx, __FILE__, __LINE__, msg);\
     continue;\
   }
 
