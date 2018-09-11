@@ -7,9 +7,9 @@
 /* public APIs */
 #define cabular\
   int main(void) {\
-    struct cabular_ctx_t ctx = { .failed_count = 0, .first_failure = NULL, .last_failure = NULL };\
+    struct cabular_ctx_t ctx = { .test_count = 0, .failed_count = 0, .first_failure = NULL, .last_failure = NULL };\
     cabular_main(&ctx);\
-    printf("%d failure(s)\n", ctx.failed_count);\
+    printf("%d test(s), %d failure(s)\n", ctx.test_count, ctx.failed_count);\
     for (struct cabular_failure_t *f = ctx.first_failure; f != NULL; f = f->next) {\
       printf("  %s:%d\n    pattern: %s\n    %s\n", f->filename, f->line, f->pattern_str, f->msg);\
     }\
@@ -33,7 +33,7 @@
 #define test_with(name, patterns, pattern)\
   printf("  %s: ", cabular_make_str(name));\
   cabular_case_counter = 0;\
-  for (struct cabular_pattern_type(patterns) *pattern = cabular_patterns_var(patterns); ((cabular_ctx->is_failed = 0), (cabular_ctx->current_pattern_str = pattern->cabular_pattern_str), cabular_case_counter) < sizeof(cabular_patterns_var(patterns)) / sizeof(cabular_patterns_var(patterns)[0]) || (printf("\n"), 0); printf("%s", cabular_ctx->is_failed ? ((cabular_ctx->failed_count += 1), "F") : "."), cabular_case_counter++, pattern++)
+  for (struct cabular_pattern_type(patterns) *pattern = cabular_patterns_var(patterns); ((cabular_ctx->is_failed = 0), (cabular_ctx->current_pattern_str = pattern->cabular_pattern_str), cabular_case_counter) < sizeof(cabular_patterns_var(patterns)) / sizeof(cabular_patterns_var(patterns)[0]) || (printf("\n"), 0); printf("%s", cabular_ctx->is_failed ? ((cabular_ctx->failed_count += 1), "F") : "."), cabular_ctx->test_count++, cabular_case_counter++, pattern++)
 
 #define fail(msg)\
   {\
@@ -62,6 +62,7 @@ struct cabular_failure_t {
 };
 
 struct cabular_ctx_t {
+  int test_count;
   int failed_count;
   int is_failed;
   const char *current_pattern_str;
