@@ -6,7 +6,6 @@
 
 /* public APIs */
 #define cabular\
-  void cabular_main(struct cabular_ctx_t *cabular_ctx);\
   int main(void) {\
     struct cabular_ctx_t ctx = { .failed_count = 0, .first_failure = NULL, .last_failure = NULL };\
     cabular_main(&ctx);\
@@ -35,6 +34,12 @@
   printf("  %s: ", cabular_make_str(name));\
   cabular_case_counter = 0;\
   for (struct cabular_pattern_type(patterns) *pattern = cabular_patterns_var(patterns); ((cabular_ctx->is_failed = 0), (cabular_ctx->current_pattern_str = pattern->cabular_pattern_str), cabular_case_counter) < sizeof(cabular_patterns_var(patterns)) / sizeof(cabular_patterns_var(patterns)[0]) || (printf("\n"), 0); printf("%s", cabular_ctx->is_failed ? ((cabular_ctx->failed_count += 1), "F") : "."), cabular_case_counter++, pattern++)
+
+#define fail(msg)\
+  {\
+    cabular_fail(cabular_ctx, __FILE__, __LINE__, msg);\
+    continue;\
+  }
 
 #define expect_that(expr) if (!(expr)) fail("assertion is failed: " cabular_make_str(expr))
 
@@ -95,10 +100,7 @@ void cabular_fail(struct cabular_ctx_t *ctx, const char *filename, int line, con
 
   ctx->is_failed = 1;
 }
-#define fail(msg)\
-  {\
-    cabular_fail(cabular_ctx, __FILE__, __LINE__, msg);\
-    continue;\
-  }
+
+void cabular_main(struct cabular_ctx_t *cabular_ctx);
 
 #endif
