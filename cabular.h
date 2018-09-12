@@ -11,7 +11,7 @@
     cabular_main(&ctx);\
     printf("%d test(s), %d failure(s)\n", ctx.test_count, ctx.failed_count);\
     for (struct cabular_failure_t *f = ctx.first_failure; f != NULL; f = f->next) {\
-      printf("  %s:%d\n    pattern: %s\n    %s\n", f->filename, f->line, f->pattern_str, f->msg);\
+      printf("  %s at %s:%d\n    pattern: %s\n    %s\n", f->test_name, f->filename, f->line, f->pattern_str, f->msg);\
     }\
     cabular_cleanup(&ctx);\
     return !!ctx.failed_count;\
@@ -31,7 +31,8 @@
 #define pattern(...) { cabular_make_str((__VA_ARGS__)), __VA_ARGS__ }
 
 #define test_with(name, patterns, pattern)\
-  printf("  %s: ", cabular_make_str(name));\
+  cabular_ctx->current_test = cabular_make_str(name);\
+  printf("  %s: ", cabular_ctx->current_test);\
   cabular_case_counter = 0;\
   for (struct cabular_pattern_type(patterns) *pattern = cabular_patterns_var(patterns); ((cabular_ctx->is_failed = 0), (cabular_ctx->current_pattern_str = pattern->cabular_pattern_str), cabular_case_counter) < sizeof(cabular_patterns_var(patterns)) / sizeof(cabular_patterns_var(patterns)[0]) || (printf("\n"), 0); printf("%s", cabular_ctx->is_failed ? ((cabular_ctx->failed_count += 1), "F") : "."), cabular_ctx->test_count++, cabular_case_counter++, pattern++)
 
@@ -54,6 +55,7 @@
 
 /* test context */
 struct cabular_failure_t {
+  const char *test_name;
   const char *filename;
   int line;
   const char *pattern_str;
@@ -65,6 +67,7 @@ struct cabular_ctx_t {
   int test_count;
   int failed_count;
   int is_failed;
+  const char *current_test;
   const char *current_pattern_str;
   struct cabular_failure_t *first_failure, *last_failure;
 };
@@ -86,6 +89,7 @@ void cabular_fail(struct cabular_ctx_t *ctx, const char *filename, int line, con
     fprintf(stderr, "%s:%d: cannot allocate memory for failure infomation\n", filename, line);
     abort();
   }
+  failure->test_name = ctx->current_test;
   failure->filename = filename;
   failure->line = line;
   failure->pattern_str = ctx->current_pattern_str;
