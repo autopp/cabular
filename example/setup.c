@@ -14,7 +14,7 @@ cabular {
     }
 
     test(return_value) {
-      expect_that(store(&x, 1) == 42);
+      expect_that(store(&var, 1) == 42);
     }
 
     patterns(store_inout, int new;) {
