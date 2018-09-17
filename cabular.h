@@ -22,10 +22,13 @@
 #define suite(name)\
   cabular_ctx->current_suite = cabular_make_str(name);\
   cabular_ctx->current_setup_func = cabular_default_setup;\
+  cabular_ctx->current_teardown_func = cabular_default_teardown;\
   printf("%s\n", cabular_ctx->current_suite);\
   for (size_t cabular_case_counter, cabular_suite_executed = 0; !cabular_suite_executed || (printf("\n"), 0); cabular_suite_executed = 1)
 
 #define setup cabular_setup(cabular_setup_func_##__COUNTER__)
+
+#define teardown cabular_teardown(cabular_teardown_func_##__COUNTER__)
 
 #define test(name) test_with(name, cabular_single, cabular_dummy)
 
@@ -38,7 +41,7 @@
   cabular_ctx->current_test = cabular_make_str(name);\
   printf("  %s: ", cabular_ctx->current_test);\
   cabular_case_counter = 0;\
-  for (struct cabular_pattern_type(patterns) *pattern = cabular_patterns_var(patterns); ((cabular_ctx->is_failed = 0), (cabular_ctx->current_pattern_str = pattern->cabular_pattern_str), cabular_ctx->current_setup_func(), cabular_case_counter) < sizeof(cabular_patterns_var(patterns)) / sizeof(cabular_patterns_var(patterns)[0]) || (printf("\n"), 0); printf("%s", cabular_ctx->is_failed ? ((cabular_ctx->failed_count += 1), "F") : "."), cabular_ctx->test_count++, cabular_case_counter++, pattern++)
+  for (struct cabular_pattern_type(patterns) *pattern = cabular_patterns_var(patterns); ((cabular_ctx->is_failed = 0), (cabular_ctx->current_pattern_str = pattern->cabular_pattern_str), cabular_ctx->current_setup_func(), cabular_case_counter) < sizeof(cabular_patterns_var(patterns)) / sizeof(cabular_patterns_var(patterns)[0]) || (printf("\n"), 0); cabular_ctx->current_teardown_func(), printf("%s", cabular_ctx->is_failed ? ((cabular_ctx->failed_count += 1), "F") : "."), cabular_ctx->test_count++, cabular_case_counter++, pattern++)
 
 #define fail(msg)\
   {\
@@ -74,6 +77,7 @@ struct cabular_ctx_t {
   int is_failed;
   const char *current_suite;
   void (*current_setup_func)();
+  void (*current_teardown_func)();
   const char *current_test;
   const char *current_pattern_str;
   struct cabular_failure_t *first_failure, *last_failure;
@@ -95,6 +99,15 @@ void cabular_cleanup(struct cabular_ctx_t *ctx) {
   void cabular_setup_func()
 
 void cabular_default_setup() {
+  // do nothing
+}
+
+#define cabular_teardown(cabular_teardown_func)\
+  auto void cabular_teardown_func();\
+  cabular_ctx->current_teardown_func = cabular_teardown_func;\
+  void cabular_teardown_func()
+
+void cabular_default_teardown() {
   // do nothing
 }
 
