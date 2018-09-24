@@ -1,10 +1,10 @@
-.PONOY: test clean
+.PONOY: test clean example
 
 example:
-	$(MAKE) -C example example
+	$(MAKE) -C sample example
 
 test:
-	$(MAKE) -C example
+	$(MAKE) -C sample
 
 clean:
-	$(MAKE) -C example clean
+	$(MAKE) -C sample clean
