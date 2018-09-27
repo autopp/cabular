@@ -22,6 +22,7 @@ cabular {
 
     teardown {
       free(dst);
+      dst = NULL;
     }
 
     patterns(mystrcpy_src, const char *src;) {
